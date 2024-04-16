@@ -1,4 +1,8 @@
-const { fetchTopics, fetchAPI } = require("../models/topics.models.js");
+const {
+  fetchTopics,
+  fetchAPI,
+  fetchArticle,
+} = require("../models/topics.models.js");
 const jsonData = require("../endpoints.json");
 
 function getTopics(req, res, next) {
@@ -8,10 +12,21 @@ function getTopics(req, res, next) {
 }
 
 function getAPI(req, res, next) {
-  return Promise.all([fetchAPI()]).then((data) => {
-    let parsedData = { api: JSON.parse(data) };
-    return res.status(200).send(parsedData);
-  });
+  return Promise.resolve(fetchAPI())
+    .then((data) => {
+      let parsedData = { api: JSON.parse(data) };
+      res.status(200).send(parsedData);
+    })
+    .catch(next);
 }
 
-module.exports = { getTopics, getAPI };
+function getArticle(req, res, next) {
+  const { article_id } = req.params;
+  return fetchArticle(article_id)
+    .then((data) => {
+      res.status(200).send({ article: data });
+    })
+    .catch(next);
+}
+
+module.exports = { getTopics, getAPI, getArticle };
