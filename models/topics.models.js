@@ -1,4 +1,6 @@
 db = require("../db/connection");
+fs = require("fs/promises");
+const path = `./endpoints.json`;
 
 function fetchTopics() {
   let sqlGet = "SELECT * FROM topics;";
@@ -7,4 +9,10 @@ function fetchTopics() {
   });
 }
 
-module.exports = { fetchTopics };
+function fetchAPI() {
+  return fs.readFile(path, "utf8").then((data) => {
+    return data;
+  });
+}
+
+module.exports = { fetchTopics, fetchAPI };

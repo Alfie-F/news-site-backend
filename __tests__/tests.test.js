@@ -39,3 +39,19 @@ describe("/api/not-an-endpoint", () => {
       });
   });
 });
+describe("/api", () => {
+  test("GET 200: responds with a 200 status code and gets all apis", () => {
+    return request(app)
+      .get("/api")
+      .expect(200)
+      .then((body) => {
+        let parse = JSON.parse(body.text);
+        expect(typeof parse).toBe("object");
+        //hi to whoever is reviewing my code! I really struggled with this question, I came up with multiple solutions but all of them would need further parsing once in thr test block,which I know isn't really correct, some advice on how to fix this in the future in your response would be absolutely wonderful, thanks in advance!
+        expect(parse.api["GET/api"]).toEqual({
+          description:
+            "serves up a json representation of all the available endpoints of the api",
+        });
+      });
+  });
+});
