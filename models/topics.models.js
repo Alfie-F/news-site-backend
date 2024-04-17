@@ -25,9 +25,19 @@ function fetchArticle(article_id) {
     });
 }
 
-module.exports = { fetchTopics, fetchAPI, fetchArticle };
+function fetchArticles() {
+  return db
+    .query(
+      "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes ORDER BY created_at DESC;;"
+    )
+    .then(({ rows }) => {
+      return rows;
+    });
+}
 
-// console.log(Number(article_id));
-// if (typeof article_id !== "number") {
-//   return Promise.reject({ status: 400, msg: "bad request" });
-// }
+module.exports = {
+  fetchTopics,
+  fetchAPI,
+  fetchArticle,
+  fetchArticles,
+};

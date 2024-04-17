@@ -9,16 +9,34 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET/api/articles": {
-    "description": "serves an array of all articles",
+  "GET/api/articles/:article_id": {
+    "description": "serves a single queried article",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
         {
+          "article_id": 7,
           "title": "Seafood substitutions are increasing",
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "article_image_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
+        }
+      ]
+    }
+  },
+  "GET/api/articles": {
+    "description": "serves an array of all articles",
+    "exampleResponse": {
+      "articles": [
+        {
+          "article_id": 7,
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "article_image_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
           "created_at": "2018-05-30T15:59:13.341Z",
           "votes": 0,
           "comment_count": 6
