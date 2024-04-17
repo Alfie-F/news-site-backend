@@ -42,7 +42,7 @@ describe("/api/not-an-endpoint", () => {
       });
   });
 });
-describe.only("/api", () => {
+describe("/api", () => {
   test("GET 200: responds with a 200 status code and gets all apis", () => {
     return request(app)
       .get("/api")
@@ -70,7 +70,7 @@ describe("/api/topics", () => {
         expect(article.article_img_url.indexOf("https")).toBe(0);
       });
   });
-  test("GET 404: responds with a 404 status code and returns custom error", () => {
+  test("GET 404: responds with a 404 status code and returns custom error when the query is valid but does not exist", () => {
     return request(app)
       .get("/api/articles/9999")
       .expect(404)
@@ -78,7 +78,7 @@ describe("/api/topics", () => {
         expect(body.msg).toBe("article does not exist");
       });
   });
-  test("GET 400: responds with a 400 status code and custom bad request error message", () => {
+  test("GET 400: responds with a 400 status code and custom bad request error message when the query is not valid", () => {
     return request(app)
       .get("/api/articles/not-an-article")
       .expect(400)
@@ -227,6 +227,68 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/still-not-an-article/comments")
       .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("/api/articles/:article_id", () => {
+  test("PATCH 200; responds with a 200 code and updates an existing article, and responds to user with the updated article", () => {
+    const update = {
+      inc_votes: -20,
+    };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(update)
+      .expect(200)
+      .then(({ body }) => {
+        let updatedArticle = body.update;
+        expect(updatedArticle).toEqual(
+          expect.objectContaining({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            article_img_url: expect.any(String),
+          })
+        );
+      });
+  });
+  test("PATCH 404: responds with a 404 status code and returns custom error when the article is a valid query but does not exist", () => {
+    const update = {
+      inc_votes: -20,
+    };
+    return request(app)
+      .patch("/api/articles/9999")
+      .send(update)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("PATCH 400: responds with a 400 status code and custom bad request error message when the query is invalid", () => {
+    const update = {
+      inc_votes: -20,
+    };
+    return request(app)
+      .patch("/api/articles/not-an-article")
+      .send(update)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: responds with a 400 status code and custom bad request error message when the vote increment is not a number", () => {
+    const update = {
+      inc_votes: "ham sandwich",
+    };
+    return request(app)
+      .patch("/api/articles/not-an-article")
+      .send(update)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
