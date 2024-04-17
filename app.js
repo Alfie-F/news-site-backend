@@ -6,6 +6,7 @@ const {
   getAPI,
   getArticle,
   getArticles,
+  getComments,
 } = require("./controllers/topics.controller.js");
 
 app.get("/api/topics", getTopics);
@@ -15,6 +16,8 @@ app.get("/api", getAPI);
 app.get("/api/articles/:article_id", getArticle);
 
 app.get("/api/articles", getArticles);
+
+app.get("/api/articles/:article_id/comments", getComments);
 
 app.all("*", (request, response) => {
   response.status(404).send({ msg: "Endpoint Not Found" });
