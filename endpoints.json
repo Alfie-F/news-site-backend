@@ -1,6 +1,6 @@
 {
   "GET/api": {
-    "description": "serves up a json representation of all the available endpoints of the api"
+    "description": "serves up a json representation of all the available endpoints of the api (this .json file "
   },
   "GET/api/topics": {
     "description": "serves an array of all topics",
@@ -13,7 +13,7 @@
     "description": "serves a single queried article",
     "queries": "any integer with an existing article",
     "exampleResponse": {
-      "articles": 
+      "article": 
         {
           "article_id": 7,
           "title": "Seafood substitutions are increasing",
@@ -30,8 +30,7 @@
   "GET/api/articles": {
     "description": "serves an array of all articles",
     "queries": [],
-    "exampleResponse": {
-      "articles": [
+    "exampleResponse": [
         {
           "article_id": 7,
           "title": "Seafood substitutions are increasing",
@@ -43,13 +42,12 @@
           "comment_count": 6
         }
       ]
-    }
-  },
+    },
   "GET/api/articles/:article_id/comments": {
     "description": "returns an array of comments for given article id",
     "queries": "any integer with an existing article",
-    "exampleResponse": {
-      "articles": [
+    "exampleResponse": 
+      [
         {
           "comment_id":1,
           "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -67,12 +65,12 @@
           "created_at": 1604113380000
         }
       ]
-    }
-  },
+    },
   "POST/api/articles/:article_id/comments": {
-    "description": "posts the submitted body and returns that body if successfully posted",
+    "description": "posts the submitted comment body and returns that body if successfully posted",
+    "queries": "any integer with an existing article",
     "exampleResponse": {
-      "articles": 
+      "comment": 
         {
           "comment_id":20,
           "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
@@ -81,6 +79,23 @@
           "article_id": 9,
           "created_at": 1586179020000
         }
+    }
+  },
+  "PATCH/api/articles/:article_id": {
+    "description": "updates an article vy article id, changing the nu,ber of votes depending on the body",
+    "queries": {"inc_votes" :"any integer with an existing article"},
+    "exampleResponse": {
+      "update": 
+      {
+        "article_id": 7,
+        "title": "Seafood substitutions are increasing",
+        "topic": "cooking",
+        "author": "weegembump",
+        "article_image_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+        "created_at": "2018-05-30T15:59:13.341Z",
+        "votes": -100,
+        "comment_count": 6
+      }
     }
   }
 }

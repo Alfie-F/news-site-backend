@@ -4,6 +4,7 @@ const {
   fetchArticles,
   fetchComments,
   sendComment,
+  fixArticle,
 } = require("../models/topics.models.js");
 fs = require("fs/promises");
 const path = `./endpoints.json`;
@@ -49,9 +50,18 @@ function getComments(req, res, next) {
 function postComment(req, res, next) {
   const { article_id } = req.params;
   const commentBody = req.body;
-  sendComment(article_id, commentBody)
+  return sendComment(article_id, commentBody)
     .then((data) => {
       res.status(200).send({ comment: data });
+    })
+    .catch(next);
+}
+function patchArticle(req, res, next) {
+  const { article_id } = req.params;
+  const { inc_votes } = req.body;
+  fixArticle(article_id, inc_votes)
+    .then((data) => {
+      res.status(200).send({ update: data });
     })
     .catch(next);
 }
@@ -63,4 +73,5 @@ module.exports = {
   getArticles,
   getComments,
   postComment,
+  patchArticle,
 };
