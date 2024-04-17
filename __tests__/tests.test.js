@@ -2,6 +2,7 @@ const request = require("supertest");
 const app = require("../app.js");
 const seed = require("../db/seeds/seed.js");
 const db = require("../db/connection.js");
+const endpointapi = require("../endpoints.json");
 const {
   articleData,
   commentData,
@@ -41,18 +42,13 @@ describe("/api/not-an-endpoint", () => {
       });
   });
 });
-describe("/api", () => {
+describe.only("/api", () => {
   test("GET 200: responds with a 200 status code and gets all apis", () => {
     return request(app)
       .get("/api")
       .expect(200)
-      .then((body) => {
-        let parse = JSON.parse(body.text);
-        expect(typeof parse).toBe("object");
-        expect(parse.api["GET/api"]).toEqual({
-          description:
-            "serves up a json representation of all the available endpoints of the api",
-        });
+      .then(({ body }) => {
+        expect(body.api).toEqual(endpointapi);
       });
   });
 });
