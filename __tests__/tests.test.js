@@ -24,8 +24,10 @@ describe("/api/topics", () => {
       .expect(200)
       .then(({ body }) => {
         expect(body.topics).toHaveLength(3);
-        expect(body.topics[0]).toHaveProperty("slug");
-        expect(body.topics[0]).toHaveProperty("description");
+        body.topics.forEach((topic) => {
+          expect(topic).toHaveProperty("slug");
+          expect(topic).toHaveProperty("description");
+        });
       });
   });
 });
@@ -54,7 +56,7 @@ describe("/api", () => {
       });
   });
 });
-describe.only("/api/topics", () => {
+describe("/api/topics", () => {
   test("GET 200: responds with a 200 status code and gets all topics", () => {
     return request(app)
       .get("/api/articles/7")
@@ -86,6 +88,27 @@ describe.only("/api/topics", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("/api/articles", () => {
+  test("GET 200: responds with a 200 status code and gets all articles", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body).toHaveLength(13);
+        body.forEach((topic) => {
+          expect(topic).toHaveProperty("title");
+          expect(topic).toHaveProperty("topic");
+          expect(topic).toHaveProperty("author");
+          expect(topic).toHaveProperty("created_at");
+          expect(topic).toHaveProperty("article_img_url");
+          expect(topic).toHaveProperty("article_id");
+          expect(topic).toHaveProperty("votes");
+          expect(topic).toHaveProperty("comment_count");
+        });
+        expect(body).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
