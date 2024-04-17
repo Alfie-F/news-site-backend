@@ -35,9 +35,23 @@ function fetchArticles() {
     });
 }
 
+function fetchComments(article_id) {
+  return db
+    .query(
+      "SELECT * FROM comments where article_id = $1 ORDER BY created_at ASC",
+      [article_id]
+    )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      } else return rows;
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchAPI,
   fetchArticle,
   fetchArticles,
+  fetchComments,
 };

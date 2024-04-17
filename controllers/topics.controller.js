@@ -3,6 +3,7 @@ const {
   fetchAPI,
   fetchArticle,
   fetchArticles,
+  fetchComments,
 } = require("../models/topics.models.js");
 const jsonData = require("../endpoints.json");
 
@@ -36,4 +37,10 @@ function getArticles(req, res, next) {
     .catch(next);
 }
 
-module.exports = { getTopics, getAPI, getArticle, getArticles };
+function getComments(req, res, next) {
+  const { article_id } = req.params;
+  return fetchComments(article_id)
+    .then((data) => res.status(200).send(data))
+    .catch(next);
+}
+module.exports = { getTopics, getAPI, getArticle, getArticles, getComments };

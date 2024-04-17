@@ -112,3 +112,49 @@ describe("/api/articles", () => {
       });
   });
 });
+describe.only("/api/articles/:article_id/comments", () => {
+  test("GET 200: responds with a 200 status code and comment when only one comment for that article", () => {
+    return request(app)
+      .get("/api/articles/6/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body = body[0];
+        expect(body.article_id).toBe(6);
+        expect(typeof body.author).toBe("string");
+        expect(typeof body.body).toBe("string");
+        expect(typeof body.created_at).toBe("string");
+        expect(typeof body.votes).toBe("number");
+      });
+  });
+  test("GET 200: responds with a 200 status code and comment when only one comment for that article", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        body.forEach((body) => {
+          expect(body.article_id).toBe(1);
+          expect(typeof body.author).toBe("string");
+          expect(typeof body.body).toBe("string");
+          expect(typeof body.created_at).toBe("string");
+          expect(typeof body.votes).toBe("number");
+        });
+        expect(body).toBeSortedBy("created_at");
+      });
+  });
+  test("GET 404: responds with a 404 status code and returns custom error", () => {
+    return request(app)
+      .get("/api/articles/12345/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("GET 400: responds with a 400 status code and custom bad request error message", () => {
+    return request(app)
+      .get("/api/articles/not-an-article/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
