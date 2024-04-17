@@ -48,10 +48,22 @@ function fetchComments(article_id) {
     });
 }
 
+function sendComment(articleID, commentBody) {
+  return db
+    .query(
+      "INSERT INTO comments (author, body, article_id, votes, created_at) VALUES ($1, $2, $3, 0, NOW()) RETURNING *",
+      [commentBody.username, commentBody.body, articleID]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
 module.exports = {
   fetchTopics,
   fetchAPI,
   fetchArticle,
   fetchArticles,
   fetchComments,
+  sendComment,
 };

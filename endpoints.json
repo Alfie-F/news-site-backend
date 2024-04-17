@@ -11,9 +11,9 @@
   },
   "GET/api/articles/:article_id": {
     "description": "serves a single queried article",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": "any integer with an existing article",
     "exampleResponse": {
-      "articles": [
+      "articles": 
         {
           "article_id": 7,
           "title": "Seafood substitutions are increasing",
@@ -24,11 +24,12 @@
           "votes": 0,
           "article_image_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700"
         }
-      ]
+      
     }
   },
   "GET/api/articles": {
     "description": "serves an array of all articles",
+    "queries": [],
     "exampleResponse": {
       "articles": [
         {
@@ -42,6 +43,44 @@
           "comment_count": 6
         }
       ]
+    }
+  },
+  "GET/api/articles/:article_id/comments": {
+    "description": "returns an array of comments for given article id",
+    "queries": "any integer with an existing article",
+    "exampleResponse": {
+      "articles": [
+        {
+          "comment_id":1,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 16,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": 1586179020000
+        },
+        {
+          "comment_id": 2,
+          "body": "The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.",
+          "votes": 14,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": 1604113380000
+        }
+      ]
+    }
+  },
+  "POST/api/articles/:article_id/comments": {
+    "description": "posts the submitted body and returns that body if successfully posted",
+    "exampleResponse": {
+      "articles": 
+        {
+          "comment_id":20,
+          "body": "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+          "votes": 0,
+          "author": "butter_bridge",
+          "article_id": 9,
+          "created_at": 1586179020000
+        }
     }
   }
 }

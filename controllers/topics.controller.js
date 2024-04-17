@@ -4,6 +4,7 @@ const {
   fetchArticle,
   fetchArticles,
   fetchComments,
+  sendComment,
 } = require("../models/topics.models.js");
 const jsonData = require("../endpoints.json");
 
@@ -43,4 +44,22 @@ function getComments(req, res, next) {
     .then((data) => res.status(200).send(data))
     .catch(next);
 }
-module.exports = { getTopics, getAPI, getArticle, getArticles, getComments };
+
+function postComment(req, res, next) {
+  const { article_id } = req.params;
+  const commentBody = req.body;
+  sendComment(article_id, commentBody)
+    .then((data) => {
+      res.status(200).send({ comment: data });
+    })
+    .catch(next);
+}
+
+module.exports = {
+  getTopics,
+  getAPI,
+  getArticle,
+  getArticles,
+  getComments,
+  postComment,
+};

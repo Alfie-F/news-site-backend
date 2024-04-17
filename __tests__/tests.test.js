@@ -112,7 +112,7 @@ describe("/api/articles", () => {
       });
   });
 });
-describe.only("/api/articles/:article_id/comments", () => {
+describe("/api/articles/:article_id/comments", () => {
   test("GET 200: responds with a 200 status code and comment when only one comment for that article", () => {
     return request(app)
       .get("/api/articles/6/comments")
@@ -126,7 +126,7 @@ describe.only("/api/articles/:article_id/comments", () => {
         expect(typeof body.votes).toBe("number");
       });
   });
-  test("GET 200: responds with a 200 status code and comment when only one comment for that article", () => {
+  test("GET 200: responds with a 200 status code and all comments on that article", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
@@ -141,7 +141,7 @@ describe.only("/api/articles/:article_id/comments", () => {
         expect(body).toBeSortedBy("created_at");
       });
   });
-  test("GET 404: responds with a 404 status code and returns custom error", () => {
+  test("GET 404: responds with a 404 status code and returns custom error when request is valid but author does not exist", () => {
     return request(app)
       .get("/api/articles/12345/comments")
       .expect(404)
@@ -152,6 +152,85 @@ describe.only("/api/articles/:article_id/comments", () => {
   test("GET 400: responds with a 400 status code and custom bad request error message", () => {
     return request(app)
       .get("/api/articles/not-an-article/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("GET 404: responds with a 404 status code when requesting a comment from an author that exists but has no comments", () => {
+    return request(app)
+      .get("/api/articles/4/comments")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+});
+describe("/api/articles/:article_id/comments", () => {
+  test("POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "sam approves this message",
+    };
+    return request(app)
+      .post("/api/articles/6/comments")
+      .send(newComment)
+      .expect(200)
+      .then(({ body }) => {
+        body = body.comment;
+        expect(body.article_id).toBe(6);
+        expect(typeof body.author).toBe("string");
+        expect(typeof body.body).toBe("string");
+        expect(typeof body.created_at).toBe("string");
+        expect(typeof body.votes).toBe("number");
+      });
+  });
+  test("POST 404: responds with a 404 status code and returns custom error", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "sam approves this message",
+    };
+    return request(app)
+      .post("/api/articles/66666/comments")
+      .send(newComment)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("POST 400: responds with a 400 status code and returns bad request error message", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "sam approves this message",
+    };
+    return request(app)
+      .post("/api/articles/still-not-an-article/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete", () => {
+    const newComment = {
+      ingredients: "toast, butter, ham. cheese",
+    };
+    return request(app)
+      .post("/api/articles/still-not-an-article/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: responds with a 400 status code and returns bad request error message when author does not exist on approved authors", () => {
+    const newComment = {
+      username: "mrCool",
+      body: "sam approves this message",
+    };
+    return request(app)
+      .post("/api/articles/still-not-an-article/comments")
+      .send(newComment)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");

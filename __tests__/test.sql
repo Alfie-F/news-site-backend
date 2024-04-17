@@ -1,7 +1,5 @@
 \c nc_news_test
 
+INSERT INTO comments (author, body, article_id, votes, created_at) VALUES ('icellusedkars', 'sam approves this message', 6, 0, NOW()) RETURNING *;
 
-
-SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes ORDER BY created_at DESC;
-
--- Hi Please ignore this file :)
+SELECT * FROM comments
