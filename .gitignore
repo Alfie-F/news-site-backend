@@ -1,4 +1,4 @@
 node_modules
 .env.*
 test.sql
-sq;_stuff
+sql_stuff.txt

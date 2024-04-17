@@ -1,12 +1,12 @@
 const {
   fetchTopics,
-  fetchAPI,
   fetchArticle,
   fetchArticles,
   fetchComments,
   sendComment,
 } = require("../models/topics.models.js");
-const jsonData = require("../endpoints.json");
+fs = require("fs/promises");
+const path = `./endpoints.json`;
 
 function getTopics(req, res, next) {
   return fetchTopics()
@@ -15,7 +15,8 @@ function getTopics(req, res, next) {
 }
 
 function getAPI(req, res, next) {
-  return Promise.resolve(fetchAPI())
+  return fs
+    .readFile(path, "utf8")
     .then((data) => {
       let parsedData = { api: JSON.parse(data) };
       res.status(200).send(parsedData);
