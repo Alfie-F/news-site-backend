@@ -30,9 +30,18 @@ function fetchArticles() {
 function fetchComments(article_id) {
   return db
     .query(
-      "SELECT * FROM comments where article_id = $1 ORDER BY created_at ASC",
+      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at ASC",
       [article_id]
     )
+    .then(({ rows }) => {
+      if (rows.length === 0) {
+        return Promise.reject({ status: 404, msg: "comment does not exist" });
+      } else return rows;
+    });
+}
+function checkForArticle(article_id) {
+  return db
+    .query("SELECT * FROM articles WHERE article_id = $1", [article_id])
     .then(({ rows }) => {
       if (rows.length === 0) {
         return Promise.reject({ status: 404, msg: "article does not exist" });
@@ -79,6 +88,7 @@ module.exports = {
   fetchArticle,
   fetchArticles,
   fetchComments,
+  checkForArticle,
   sendComment,
   fixArticle,
   removeComment,
