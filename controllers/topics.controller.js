@@ -5,6 +5,7 @@ const {
   fetchComments,
   sendComment,
   fixArticle,
+  removeComment,
 } = require("../models/topics.models.js");
 fs = require("fs/promises");
 const path = `./endpoints.json`;
@@ -59,9 +60,18 @@ function postComment(req, res, next) {
 function patchArticle(req, res, next) {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  fixArticle(article_id, inc_votes)
+  return fixArticle(article_id, inc_votes)
     .then((data) => {
       res.status(200).send({ update: data });
+    })
+    .catch(next);
+}
+
+function deleteComment(req, res, next) {
+  const { comment_id } = req.params;
+  return removeComment(comment_id)
+    .then((body) => {
+      res.status(204).send();
     })
     .catch(next);
 }
@@ -74,4 +84,5 @@ module.exports = {
   getComments,
   postComment,
   patchArticle,
+  deleteComment,
 };
