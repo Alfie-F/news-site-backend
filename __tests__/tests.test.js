@@ -343,11 +343,34 @@ describe("/api/users", () => {
       .then(({ body }) => {
         let users = body.users;
         expect(users).toHaveLength(4);
-        console.log(users);
         users.forEach((user) => {
           expect(user).toHaveProperty("username");
           expect(user).toHaveProperty("name");
           expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+});
+describe("/api/articles?sort_by=topic_query", () => {
+  test("GET 200: Responds with a 200 status code and gets list of articles filtered by the topic the client specifies in the query", () => {
+    return request(app)
+      .get("/api/articles?sort_by=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        let { articles } = body;
+        expect(articles).toHaveLength(12);
+        articles.forEach((article) => {
+          expect(article.topic).toBe("mitch");
+        });
+      });
+  });
+  test("GET 403: Responds with a 403 status code when request is not on greenlist", () => {
+    return request(app)
+      .get("/api/articles?sort_by=recipes")
+      .expect(403)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "topic does not exist",
         });
       });
   });

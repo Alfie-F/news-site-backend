@@ -16,14 +16,21 @@ function fetchArticle(article_id) {
     });
 }
 
-function fetchArticles() {
-  return db
-    .query(
-      "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id GROUP BY articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes ORDER BY created_at DESC;;"
-    )
-    .then(({ rows }) => {
-      return rows;
-    });
+function fetchArticles(sort_by) {
+  const validQueries = ["mitch", "cats"];
+  if (sort_by !== undefined && !validQueries.includes(sort_by)) {
+    return Promise.reject({ status: 403, msg: "topic does not exist" });
+  }
+  let sqlQuery =
+    "SELECT articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
+  if (validQueries.includes(sort_by)) {
+    sqlQuery += ` WHERE topic = '${sort_by}'`;
+  }
+  sqlQuery +=
+    " GROUP BY articles.article_id, title, topic, articles.author, articles.created_at, article_img_url, articles.votes ORDER BY created_at DESC;";
+  return db.query(sqlQuery).then(({ rows }) => {
+    return rows;
+  });
 }
 
 function fetchComments(article_id) {
