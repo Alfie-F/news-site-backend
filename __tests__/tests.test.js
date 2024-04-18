@@ -295,7 +295,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 });
-describe.only("/api/comments/:comment_id", () => {
+describe("/api/comments/:comment_id", () => {
   test("DELETE:204 deletes the specified comments and sends no body back", () => {
     return request(app)
       .delete("/api/comments/3")
