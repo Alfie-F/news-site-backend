@@ -334,3 +334,21 @@ describe("/api/comments/:comment_id", () => {
       });
   });
 });
+
+describe.only("/api/users", () => {
+  test("GET 200: responds with a 200 status code and gets all users", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        let users = body.users;
+        expect(users).toHaveLength(4);
+        console.log(users);
+        users.forEach((user) => {
+          expect(user).toHaveProperty("username");
+          expect(user).toHaveProperty("name");
+          expect(user).toHaveProperty("avatar_url");
+        });
+      });
+  });
+});
