@@ -38,7 +38,8 @@ function getArticle(req, res, next) {
 }
 
 function getArticles(req, res, next) {
-  return fetchArticles()
+  const { sort_by } = req.query;
+  return fetchArticles(sort_by)
     .then((articles) => res.status(200).send({ articles }))
     .catch(next);
 }
