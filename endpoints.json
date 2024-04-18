@@ -82,7 +82,7 @@
     }
   },
   "PATCH/api/articles/:article_id": {
-    "description": "updates an article vy article id, changing the nu,ber of votes depending on the body",
+    "description": "updates an article by article id, changing the number of votes depending on the body",
     "queries": {"inc_votes" :"any integer with an existing article"},
     "exampleResponse": {
       "update": 
@@ -97,5 +97,10 @@
         "comment_count": 6
       }
     }
-  }
+  },
+  "Delete/api/comments/:comment_id": {
+    "description": "deletes a comment by comment id, returning no body on a 204 if successful",
+    "queries": "any integer with an existing comment",
+    "exampleResponse": {}
+}
 }
