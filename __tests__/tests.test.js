@@ -32,6 +32,7 @@ describe("/api/topics", () => {
       });
   });
 });
+
 describe("/api/not-an-endpoint", () => {
   test("GET 404: responds with a 400 status code for a path that does not exist", () => {
     return request(app)
@@ -42,6 +43,7 @@ describe("/api/not-an-endpoint", () => {
       });
   });
 });
+
 describe("/api", () => {
   test("GET 200: responds with a 200 status code and gets all apis", () => {
     return request(app)
@@ -52,7 +54,8 @@ describe("/api", () => {
       });
   });
 });
-describe("/api/topics", () => {
+
+describe("/api/articles/:article_id", () => {
   test("GET 200: responds with a 200 status code and gets all topics", () => {
     return request(app)
       .get("/api/articles/7")
@@ -70,6 +73,7 @@ describe("/api/topics", () => {
         expect(article.article_img_url.indexOf("https")).toBe(0);
       });
   });
+
   test("GET 404: responds with a 404 status code and returns custom error when the query is valid but does not exist", () => {
     return request(app)
       .get("/api/articles/9999")
@@ -87,54 +91,46 @@ describe("/api/topics", () => {
       });
   });
 });
+
 describe("/api/articles", () => {
-  test("GET 200: responds with a 200 status code and gets all articles", () => {
+  test("GET 200: responds with a 200 status code and gets all articles, in descending order", () => {
     return request(app)
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body).toHaveLength(13);
-        body.forEach((topic) => {
-          expect(topic).toHaveProperty("title");
-          expect(topic).toHaveProperty("topic");
-          expect(topic).toHaveProperty("author");
-          expect(topic).toHaveProperty("created_at");
-          expect(topic).toHaveProperty("article_img_url");
-          expect(topic).toHaveProperty("article_id");
-          expect(topic).toHaveProperty("votes");
-          expect(topic).toHaveProperty("comment_count");
+        let { articles } = body;
+        expect(articles).toHaveLength(13);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("comment_count");
         });
-        expect(body).toBeSortedBy("created_at", { descending: true });
+        expect(articles).toBeSortedBy("created_at", { descending: true });
       });
   });
 });
+
 describe("/api/articles/:article_id/comments", () => {
-  test("GET 200: responds with a 200 status code and comment when only one comment for that article", () => {
-    return request(app)
-      .get("/api/articles/6/comments")
-      .expect(200)
-      .then(({ body }) => {
-        body = body[0];
-        expect(body.article_id).toBe(6);
-        expect(typeof body.author).toBe("string");
-        expect(typeof body.body).toBe("string");
-        expect(typeof body.created_at).toBe("string");
-        expect(typeof body.votes).toBe("number");
-      });
-  });
   test("GET 200: responds with a 200 status code and all comments on that article", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        body.forEach((body) => {
-          expect(body.article_id).toBe(1);
-          expect(typeof body.author).toBe("string");
-          expect(typeof body.body).toBe("string");
-          expect(typeof body.created_at).toBe("string");
-          expect(typeof body.votes).toBe("number");
+        let { comments } = body;
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.votes).toBe("number");
         });
-        expect(body).toBeSortedBy("created_at");
+        expect(comments).toBeSortedBy("created_at");
       });
   });
   test("GET 404: responds with a 404 status code and returns custom error when request is valid but author does not exist", () => {
@@ -145,7 +141,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("article does not exist");
       });
   });
-  test("GET 400: responds with a 400 status code and custom bad request error message", () => {
+  test("GET 400: responds with a 400 status code and custom bad request error message when article_id is not of correct type", () => {
     return request(app)
       .get("/api/articles/not-an-article/comments")
       .expect(400)
@@ -158,10 +154,11 @@ describe("/api/articles/:article_id/comments", () => {
       .get("/api/articles/4/comments")
       .expect(404)
       .then(({ body }) => {
-        expect(body.msg).toBe("article does not exist");
+        expect(body.msg).toBe("comment does not exist");
       });
   });
 });
+
 describe("/api/articles/:article_id/comments", () => {
   test("POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added", () => {
     const newComment = {
@@ -181,7 +178,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(typeof body.votes).toBe("number");
       });
   });
-  test("POST 404: responds with a 404 status code and returns custom error", () => {
+  test("POST 404: responds with a 404 status code and returns custom error when the article_id is valid but non existent", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -194,7 +191,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("article does not exist");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when article_id is a bad request", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -209,7 +206,7 @@ describe("/api/articles/:article_id/comments", () => {
   });
   test("POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete", () => {
     const newComment = {
-      ingredients: "toast, butter, ham. cheese",
+      ingredients: "toast, butter, ham, cheese",
     };
     return request(app)
       .post("/api/articles/still-not-an-article/comments")
@@ -219,7 +216,21 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message when author does not exist on approved authors", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys", () => {
+    const newComment = {
+      username: "icellusedkars",
+      body: "sam approves this message",
+      ingredients: "toast, butter, ham, cheese",
+    };
+    return request(app)
+      .post("/api/articles/still-not-an-article/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("POST 400: responds with a 400 status code and returns bad request error message when author is not on database", () => {
     const newComment = {
       username: "mrCool",
       body: "sam approves this message",
@@ -233,6 +244,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+
 describe("/api/articles/:article_id", () => {
   test("PATCH 200; responds with a 200 code and updates an existing article, and responds to user with the updated article", () => {
     const update = {
@@ -295,6 +307,7 @@ describe("/api/articles/:article_id", () => {
       });
   });
 });
+
 describe("/api/comments/:comment_id", () => {
   test("DELETE:204 deletes the specified comments and sends no body back", () => {
     return request(app)

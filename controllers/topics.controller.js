@@ -3,6 +3,7 @@ const {
   fetchArticle,
   fetchArticles,
   fetchComments,
+  checkForArticle,
   sendComment,
   fixArticle,
   removeComment,
@@ -37,14 +38,17 @@ function getArticle(req, res, next) {
 
 function getArticles(req, res, next) {
   return fetchArticles()
-    .then((data) => res.status(200).send(data))
+    .then((articles) => res.status(200).send({ articles }))
     .catch(next);
 }
 
 function getComments(req, res, next) {
   const { article_id } = req.params;
-  return fetchComments(article_id)
-    .then((data) => res.status(200).send(data))
+  return checkForArticle(article_id)
+    .then(() => {
+      return fetchComments(article_id);
+    })
+    .then((comments) => res.status(200).send({ comments }))
     .catch(next);
 }
 
@@ -52,8 +56,8 @@ function postComment(req, res, next) {
   const { article_id } = req.params;
   const commentBody = req.body;
   return sendComment(article_id, commentBody)
-    .then((data) => {
-      res.status(200).send({ comment: data });
+    .then((comment) => {
+      res.status(200).send({ comment });
     })
     .catch(next);
 }
