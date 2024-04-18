@@ -335,7 +335,7 @@ describe("/api/comments/:comment_id", () => {
   });
 });
 
-describe.only("/api/users", () => {
+describe("/api/users", () => {
   test("GET 200: responds with a 200 status code and gets all users", () => {
     return request(app)
       .get("/api/users")
