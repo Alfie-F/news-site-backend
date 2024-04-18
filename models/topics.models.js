@@ -1,8 +1,7 @@
 db = require("../db/connection");
 
 function fetchTopics() {
-  let sqlGet = "SELECT * FROM topics;";
-  return db.query(`${sqlGet}`).then(({ rows }) => {
+  return db.query("SELECT * FROM topics;").then(({ rows }) => {
     return rows;
   });
 }
@@ -83,6 +82,12 @@ function removeComment(comment_id) {
     });
 }
 
+function fetchUsers() {
+  return db.query("SELECT * FROM users;").then(({ rows }) => {
+    return rows;
+  });
+}
+
 module.exports = {
   fetchTopics,
   fetchArticle,
@@ -92,4 +97,5 @@ module.exports = {
   sendComment,
   fixArticle,
   removeComment,
+  fetchUsers,
 };

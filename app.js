@@ -10,6 +10,7 @@ const {
   postComment,
   patchArticle,
   deleteComment,
+  getUsers,
 } = require("./controllers/topics.controller.js");
 
 app.get("/api/topics", getTopics);
@@ -27,6 +28,8 @@ app.post("/api/articles/:article_id/comments", postComment);
 app.patch("/api/articles/:article_id", patchArticle);
 
 app.delete("/api/comments/:comment_id", deleteComment);
+
+app.get("/api/users", getUsers);
 
 app.all("*", (request, response) => {
   response.status(404).send({ msg: "Endpoint Not Found" });
