@@ -1,6 +1,5 @@
 const express = require("express");
 const app = express();
-app.use(express.json());
 const {
   getTopics,
   getAPI,
@@ -12,6 +11,8 @@ const {
   deleteComment,
   getUsers,
 } = require("./controllers/topics.controller.js");
+
+app.use(express.json());
 
 app.get("/api/topics", getTopics);
 
@@ -50,7 +51,12 @@ app.use((err, req, res, next) => {
 app.use((err, req, res, next) => {
   if (err.code === "23503")
     return res.status(404).send({ msg: "article does not exist" });
-  else return db.end();
+  else next(err);
+});
+
+app.use((err, req, res, next) => {
+  console.log(err);
+  return res.status(500).send({ msg: "you should not see this error message" });
 });
 
 module.exports = app;

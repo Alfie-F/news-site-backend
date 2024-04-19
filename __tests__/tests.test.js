@@ -3,19 +3,13 @@ const app = require("../app.js");
 const seed = require("../db/seeds/seed.js");
 const db = require("../db/connection.js");
 const endpointapi = require("../endpoints.json");
-const {
-  articleData,
-  commentData,
-  topicData,
-  userData,
-} = require("../db/data/test-data/index.js");
-
+const testData = require("../db/data/test-data/index.js");
 beforeEach(() => {
-  return seed({ topicData, userData, articleData, commentData });
+  return seed(testData);
 });
 
-afterAll(async () => {
-  return await db.end();
+afterAll(() => {
+  return db.end();
 });
 
 describe("/api/topics", () => {
@@ -160,7 +154,7 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  test("POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added.", () => {
+  test("HANDLE POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -178,7 +172,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(typeof body.votes).toBe("number");
       });
   });
-  test("POST 404: responds with a 404 status code and returns custom error when the article_id is valid but non existent.", () => {
+  test("HANDLE POST 404: responds with a 404 status code and returns custom error when the article_id is valid but non existent.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -191,7 +185,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("article does not exist");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message when article_id is a bad request.", () => {
+  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when article_id is a bad request.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -204,7 +198,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
+  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
     const newComment = {
       ingredients: "toast, butter, ham, cheese",
     };
@@ -216,7 +210,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
+  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -230,7 +224,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
+  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
     const newComment = {
       username: "mrCool",
       body: "sam approves this message",
