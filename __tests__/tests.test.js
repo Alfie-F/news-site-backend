@@ -14,8 +14,8 @@ beforeEach(() => {
   return seed({ topicData, userData, articleData, commentData });
 });
 
-afterAll(() => {
-  return db.end();
+afterAll(async () => {
+  return await db.end();
 });
 
 describe("/api/topics", () => {
@@ -337,7 +337,10 @@ describe("/api/articles/:article_id", () => {
 
 describe("/api/comments/:comment_id", () => {
   test("DELETE:204 deletes the specified comments and sends no body back.", () => {
-    return request(app).delete("/api/comments/3").expect(204);
+    return request(app)
+      .delete("/api/comments/3")
+      .expect(204)
+      .then(() => {});
   });
 
   test("DELETE:404 responds with an appropriate status and error message when given a valid but non-existent id.", () => {
