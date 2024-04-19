@@ -5,7 +5,7 @@ const {
   fetchComments,
   checkForArticle,
   sendComment,
-  fixArticle,
+  updateArticle,
   removeComment,
   fetchUsers,
 } = require("../models/topics.models.js");
@@ -66,7 +66,7 @@ function postComment(req, res, next) {
 function patchArticle(req, res, next) {
   const { article_id } = req.params;
   const { inc_votes } = req.body;
-  return fixArticle(article_id, inc_votes)
+  return updateArticle(article_id, inc_votes)
     .then((data) => {
       res.status(200).send({ update: data });
     })

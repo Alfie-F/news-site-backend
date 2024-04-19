@@ -230,7 +230,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("POST 400: responds with a 400 status code and returns bad request error message when author is not on database.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
     const newComment = {
       username: "mrCool",
       body: "sam approves this message",
@@ -255,8 +255,9 @@ describe("/api/articles/:article_id", () => {
       .send(update)
       .expect(200)
       .then(({ body }) => {
-        let updatedArticle = body.update;
-        expect(updatedArticle).toEqual(
+        let { update } = body;
+        expect(update.votes).toEqual(80);
+        expect(update).toEqual(
           expect.objectContaining({
             article_id: expect.any(Number),
             title: expect.any(String),
@@ -264,7 +265,6 @@ describe("/api/articles/:article_id", () => {
             author: expect.any(String),
             body: expect.any(String),
             created_at: expect.any(String),
-            votes: expect.any(Number),
             article_img_url: expect.any(String),
           })
         );
@@ -299,24 +299,47 @@ describe("/api/articles/:article_id", () => {
       inc_votes: "ham sandwich",
     };
     return request(app)
-      .patch("/api/articles/not-an-article")
+      .patch("/api/articles/7")
       .send(update)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
       });
   });
+  test("PATCH 400: responds with a 400 status code and custom bad request error message when the vote increment key is misspelled.", () => {
+    const update = {
+      votes: "6",
+    };
+    return request(app)
+      .patch("/api/articles/7")
+      .send(update)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 200: responds with a 200 when there is a a valid key in the update object, ignoring any non valid keys.", () => {
+    const update = {
+      inc_votes: "-55",
+      recipe: "make sandwich",
+      ingredients: "bacon, lettuce, tomato",
+    };
+    return request(app)
+      .patch("/api/articles/4")
+      .send(update)
+      .expect(200)
+      .then(({ body }) => {
+        let { update } = body;
+        expect(update.votes).toEqual(-55);
+      });
+  });
 });
 
 describe("/api/comments/:comment_id", () => {
   test("DELETE:204 deletes the specified comments and sends no body back.", () => {
-    return request(app)
-      .delete("/api/comments/3")
-      .expect(204)
-      .then(({ body }) => {
-        expect(!body.msg).toBe(true);
-      });
+    return request(app).delete("/api/comments/3").expect(204);
   });
+
   test("DELETE:404 responds with an appropriate status and error message when given a valid but non-existent id.", () => {
     return request(app)
       .delete("/api/comments/30000")
@@ -341,7 +364,7 @@ describe("/api/users", () => {
       .get("/api/users")
       .expect(200)
       .then(({ body }) => {
-        let users = body.users;
+        let { users } = body;
         expect(users).toHaveLength(4);
         users.forEach((user) => {
           expect(user).toHaveProperty("username");
@@ -374,6 +397,16 @@ describe("/api/articles?sort_by=topic_query", () => {
         });
       });
   });
+  test("GET 404: Responds with a 404 status code when request is on greenlist but has no associated articles.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=paper")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "no articles exist for topic",
+        });
+      });
+  });
 });
 describe("/api/articles/:article_id", () => {
   test("GET 200: adds additional functionality to includes comment_count in returned object, which counts the amount of comments with the corresponding article id.", () => {
@@ -382,7 +415,6 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         let { article } = body;
-        console.log(article);
         expect(typeof article.comment_count).toBe("number");
         expect(article.comment_count).toBe(11);
       });
