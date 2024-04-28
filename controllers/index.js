@@ -10,7 +10,7 @@ const {
   patchArticle,
 } = require("./articles.controllers");
 const { deleteComment } = require("./comments.controllers");
-const { getUsers } = require("./users.controllers");
+const { getUsers, getUser } = require("./users.controllers");
 
 module.exports = {
   getTopics,
@@ -22,4 +22,5 @@ module.exports = {
   patchArticle,
   deleteComment,
   getUsers,
+  getUser,
 };

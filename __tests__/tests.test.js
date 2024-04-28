@@ -47,7 +47,7 @@ describe("/api", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("GET 200: responds with a 200 status code and gets all topics.", () => {
+  test("GET 200: responds with a 200 status code and gets the correct article.", () => {
     return request(app)
       .get("/api/articles/7")
       .expect(200)
@@ -454,6 +454,30 @@ describe("/api/articles?sort_by=topic_query", () => {
         let { articles } = body;
         expect(articles).toHaveLength(6);
         expect(articles).toBeSortedBy("author", { descending: false });
+      });
+  });
+});
+
+describe("/api/articles/:article_id", () => {
+  test("GET 200: responds with a 200 status code and gets the correct user.", () => {
+    return request(app)
+      .get("/api/users/butter_bridge")
+      .expect(200)
+      .then(({ body }) => {
+        let { user } = body;
+        expect(user.username).toBe("butter_bridge");
+        expect(typeof user.name).toBe("string");
+        expect(typeof user.avatar_url).toBe("string");
+        expect(user.avatar_url.indexOf("https")).toBe(0);
+      });
+  });
+
+  test("GET 404: responds with a 404 status code and returns custom error when the query is valid but does not exist.", () => {
+    return request(app)
+      .get("/api/users/steve")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("user does not exist");
       });
   });
 });

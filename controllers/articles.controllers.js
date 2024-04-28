@@ -10,8 +10,8 @@ const {
 function getArticle(req, res, next) {
   const { article_id } = req.params;
   return fetchArticle(article_id)
-    .then((data) => {
-      res.status(200).send({ article: data });
+    .then((article) => {
+      res.status(200).send({ article });
     })
     .catch(next);
 }
