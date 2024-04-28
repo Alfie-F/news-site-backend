@@ -481,3 +481,93 @@ describe("/api/articles/:article_id", () => {
       });
   });
 });
+
+describe("/api/articles/:article_id", () => {
+  test("PATCH 200; responds with a 200 code and updates an existing comment, and responds to user with the updated comment.", () => {
+    const update = {
+      inc_votes: +2000,
+    };
+    return request(app)
+      .patch("/api/comments/1")
+      .send(update)
+      .expect(200)
+      .then(({ body }) => {
+        let { update } = body;
+        console.log(body);
+        expect(update.votes).toEqual(2016);
+        expect(update.comment_id).toEqual(1),
+          expect(update).toEqual(
+            expect.objectContaining({
+              article_id: expect.any(Number),
+              body: expect.any(String),
+              author: expect.any(String),
+              votes: expect.any(Number),
+              created_at: expect.any(String),
+            })
+          );
+      });
+  });
+  test("PATCH 404: responds with a 404 status code and returns custom error when the comment is a valid query but does not exist.", () => {
+    const update = {
+      inc_votes: -20,
+    };
+    return request(app)
+      .patch("/api/comments/9999")
+      .send(update)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("PATCH 400: responds with a 400 status code and custom bad request error message when the query is invalid.", () => {
+    const update = {
+      inc_votes: -20,
+    };
+    return request(app)
+      .patch("/api/comments/not-a-comment")
+      .send(update)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: responds with a 400 status code and custom bad request error message when the vote increment is not a number.", () => {
+    const update = {
+      inc_votes: "ham sandwich",
+    };
+    return request(app)
+      .patch("/api/comments/7")
+      .send(update)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 400: responds with a 400 status code and custom bad request error message when the vote increment key is misspelled.", () => {
+    const update = {
+      votes: "6",
+    };
+    return request(app)
+      .patch("/api/comments/7")
+      .send(update)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  test("PATCH 200: responds with a 200 when there is a a valid key in the update object, ignoring any non valid keys.", () => {
+    const update = {
+      inc_votes: "155",
+      recipe: "make sandwich",
+      ingredients: "bacon, lettuce, tomato",
+    };
+    return request(app)
+      .patch("/api/comments/4")
+      .send(update)
+      .expect(200)
+      .then(({ body }) => {
+        let { update } = body;
+        expect(update.votes).toEqual(55);
+      });
+  });
+});

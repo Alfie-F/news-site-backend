@@ -9,10 +9,11 @@ const {
   postComment,
   patchArticle,
 } = require("./articles.controllers");
-const { deleteComment } = require("./comments.controllers");
+const { deleteComment, patchComment } = require("./comments.controllers");
 const { getUsers, getUser } = require("./users.controllers");
 
 module.exports = {
+  patchComment,
   getTopics,
   getAPI,
   getArticle,

@@ -3,8 +3,8 @@ const app = express();
 const api = require("./routes/api-router.js");
 app.use("/api", api);
 
-app.all("*", (request, response) => {
-  response.status(404).send({ msg: "Endpoint Not Found" });
+app.all("*", (req, res) => {
+  res.status(404).send({ msg: "Endpoint Not Found" });
 });
 
 app.use((err, req, res, next) => {
@@ -14,9 +14,9 @@ app.use((err, req, res, next) => {
 });
 
 app.use((err, req, res, next) => {
-  if (err.code === "22P02" || err.code === "23502")
+  if (err.code === "22P02" || err.code === "23502") {
     return res.status(400).send({ msg: "Bad request" });
-  else next(err);
+  } else next(err);
 });
 
 app.use((err, req, res, next) => {

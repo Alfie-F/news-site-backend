@@ -9,7 +9,7 @@ const {
   sendComment,
   updateArticle,
 } = require("../models/articles.models");
-const { removeComment } = require("./comments.models");
+const { removeComment, updateComment } = require("./comments.models");
 const { fetchUsers, fetchUser } = require("./users.models");
 
 module.exports = {
@@ -23,4 +23,5 @@ module.exports = {
   removeComment,
   fetchUsers,
   fetchUser,
+  updateComment,
 };

@@ -7,6 +7,7 @@ const {
   deleteComment,
   getUsers,
   getUser,
+  patchComment,
 } = require("../controllers/index");
 
 let api = express.Router();
@@ -24,5 +25,7 @@ api.delete("/comments/:comment_id", deleteComment);
 api.get("/users", getUsers);
 
 api.get("/users/:username", getUser);
+
+api.patch("/comments/:comment_id", patchComment);
 
 module.exports = api;
