@@ -374,7 +374,7 @@ describe("/api/users", () => {
 describe("/api/articles?sort_by=topic_query", () => {
   test("GET 200: Responds with a 200 status code and gets list of articles filtered by the topic the client specifies in the query.", () => {
     return request(app)
-      .get("/api/articles?sort_by=mitch")
+      .get("/api/articles?sort_by=topic_mitch")
       .expect(200)
       .then(({ body }) => {
         let { articles } = body;
@@ -386,7 +386,7 @@ describe("/api/articles?sort_by=topic_query", () => {
   });
   test("GET 403: Responds with a 403 status code when request is not on greenlist.", () => {
     return request(app)
-      .get("/api/articles?sort_by=recipes")
+      .get("/api/articles?sort_by=topic_recipes")
       .expect(403)
       .then(({ body }) => {
         expect(body).toEqual({
@@ -396,7 +396,7 @@ describe("/api/articles?sort_by=topic_query", () => {
   });
   test("GET 404: Responds with a 404 status code when request is on greenlist but has no associated articles.", () => {
     return request(app)
-      .get("/api/articles?sort_by=paper")
+      .get("/api/articles?sort_by=topic_paper")
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({
@@ -414,6 +414,49 @@ describe("/api/articles/:article_id", () => {
         let { article } = body;
         expect(typeof article.comment_count).toBe("number");
         expect(article.comment_count).toBe(11);
+      });
+  });
+});
+
+describe("/api/articles?sort_by=topic_query", () => {
+  test("GET 200: Responds with a 200 status code and gets list of articles ordered by any valid column - desc by default.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author")
+      .expect(200)
+      .then(({ body }) => {
+        let { articles } = body;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("author", { descending: true });
+      });
+  });
+  test("GET 403: Responds with a 403 status code when request is not on greenlist.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author_name")
+      .expect(403)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "topic does not exist",
+        });
+      });
+  });
+  test("GET 200: Responds with a 200 status code and gets list of articles ordered by any valid column, if any, and can order by asc or desc.", () => {
+    return request(app)
+      .get("/api/articles?sort_by=desc")
+      .expect(200)
+      .then(({ body }) => {
+        let { articles } = body;
+        expect(articles).toHaveLength(13);
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 200: Responds with a 200 status code and gets list of articles ordered by any valid column, filtered by a value in that column, if any, and can order by asc or desc (as it has been filtered the order will be the same either way, but should not break code).", () => {
+    return request(app)
+      .get("/api/articles?sort_by=author_icellusedkars_asc")
+      .expect(200)
+      .then(({ body }) => {
+        let { articles } = body;
+        expect(articles).toHaveLength(6);
+        expect(articles).toBeSortedBy("author", { descending: false });
       });
   });
 });
