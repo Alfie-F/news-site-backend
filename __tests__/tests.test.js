@@ -25,12 +25,9 @@ describe("/api/topics", () => {
         });
       });
   });
-});
-
-describe("/api/not-an-endpoint", () => {
   test("GET 404: responds with a 400 status code for a path that does not exist.", () => {
     return request(app)
-      .get("/api/not-an_endpoint")
+      .get("/api/not-an-endpoint")
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toBe("Endpoint Not Found");
