@@ -8,6 +8,8 @@ const {
   checkForArticle,
   sendComment,
   updateArticle,
+  sendArticle,
+  addCommentCount,
 } = require("../models/articles.models");
 const { removeComment, updateComment } = require("./comments.models");
 const { fetchUsers, fetchUser } = require("./users.models");
@@ -24,4 +26,6 @@ module.exports = {
   fetchUsers,
   fetchUser,
   updateComment,
+  sendArticle,
+  addCommentCount,
 };

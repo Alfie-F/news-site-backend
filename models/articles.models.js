@@ -119,6 +119,31 @@ function updateArticle(article_id, inc_votes) {
     });
 }
 
+function sendArticle(body) {
+  return db
+    .query(
+      "INSERT INTO articles (author, title, body, topic, article_img_url, votes, comment_count, created_at) VALUES ($1, $2, $3, $4, $5, 0, 0, NOW()) RETURNING *",
+      [
+        body.author,
+        body.title,
+        body.body,
+        body.topic,
+        body.article_img_url || "www.google.com",
+      ]
+    )
+    .then(({ rows }) => {
+      return rows[0];
+    });
+}
+
+function addCommentCount() {
+  return db
+    .query("ALTER TABLE articles ADD comment_count SMALLINT DEFAULT 0;")
+    .then(() => {
+      return;
+    });
+}
+
 module.exports = {
   fetchArticle,
   fetchArticles,
@@ -126,4 +151,8 @@ module.exports = {
   checkForArticle,
   sendComment,
   updateArticle,
+  sendArticle,
+  addCommentCount,
 };
+
+// ALTER TABLE articles ADD COLUMN comment_count SMALLINT

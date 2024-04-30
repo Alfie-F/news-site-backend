@@ -5,6 +5,8 @@ const {
   checkForArticle,
   sendComment,
   updateArticle,
+  sendArticle,
+  addCommentCount,
 } = require("../models/");
 
 function getArticle(req, res, next) {
@@ -52,10 +54,23 @@ function patchArticle(req, res, next) {
     .catch(next);
 }
 
+function postArticle(req, res, next) {
+  const articleBody = req.body;
+  return addCommentCount()
+    .then(() => {
+      return sendArticle(articleBody);
+    })
+    .then((article) => {
+      res.status(200).send({ article });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getArticle,
   getArticles,
   getComments,
   postComment,
   patchArticle,
+  postArticle,
 };
