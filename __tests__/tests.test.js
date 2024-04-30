@@ -151,7 +151,7 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  test("HANDLE POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added.", () => {
+  test.only("HANDLE POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -493,7 +493,6 @@ describe("/api/articles/:article_id", () => {
       .expect(200)
       .then(({ body }) => {
         let { update } = body;
-        console.log(body);
         expect(update.votes).toEqual(2016);
         expect(update.comment_id).toEqual(1),
           expect(update).toEqual(
@@ -570,4 +569,96 @@ describe("/api/articles/:article_id", () => {
         expect(update.votes).toEqual(55);
       });
   });
+});
+
+describe.only("/api/articles", () => {
+  test("HANDLE POST 201: responds with a 201 status code and adds the new article to the existing database, then returns to user what was added - also adds comment_count category and deafuaults article_img_url if not provided.", () => {
+    const newArticle = {
+      author: "rogersop",
+      title: "my very good article",
+      body: "sam approves this message",
+      topic: "cats",
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    };
+    return request(app)
+      .post("/api/articles")
+      .send(newArticle)
+      .expect(200)
+      .then(({ body }) => {
+        console.log(body);
+        body = body.article;
+        console.log(body);
+        expect(body.article_id).toBe(14);
+        expect(typeof body.author).toBe("string");
+        expect(typeof body.body).toBe("string");
+        expect(typeof body.created_at).toBe("string");
+        expect(typeof body.votes).toBe("number");
+      });
+  });
+  //   test("HANDLE POST 404: responds with a 404 status code and returns custom error when the article_id is valid but non existent.", () => {
+  //     const newComment = {
+  //       username: "icellusedkars",
+  //       body: "sam approves this message",
+  //     };
+  //     return request(app)
+  //       .post("/api/articles/66666/comments")
+  //       .send(newComment)
+  //       .expect(404)
+  //       .then(({ body }) => {
+  //         expect(body.msg).toBe("article does not exist");
+  //       });
+  //   });
+  //   test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when article_id is a bad request.", () => {
+  //     const newComment = {
+  //       username: "icellusedkars",
+  //       body: "sam approves this message",
+  //     };
+  //     return request(app)
+  //       .post("/api/articles/still-not-an-article/comments")
+  //       .send(newComment)
+  //       .expect(400)
+  //       .then(({ body }) => {
+  //         expect(body.msg).toBe("Bad request");
+  //       });
+  //   });
+  //   test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
+  //     const newComment = {
+  //       ingredients: "toast, butter, ham, cheese",
+  //     };
+  //     return request(app)
+  //       .post("/api/articles/still-not-an-article/comments")
+  //       .send(newComment)
+  //       .expect(400)
+  //       .then(({ body }) => {
+  //         expect(body.msg).toBe("Bad request");
+  //       });
+  //   });
+  //   test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
+  //     const newComment = {
+  //       username: "icellusedkars",
+  //       body: "sam approves this message",
+  //       ingredients: "toast, butter, ham, cheese",
+  //     };
+  //     return request(app)
+  //       .post("/api/articles/still-not-an-article/comments")
+  //       .send(newComment)
+  //       .expect(400)
+  //       .then(({ body }) => {
+  //         expect(body.msg).toBe("Bad request");
+  //       });
+  //   });
+  //   test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
+  //     const newComment = {
+  //       username: "mrCool",
+  //       body: "sam approves this message",
+  //     };
+  //     return request(app)
+  //       .post("/api/articles/still-not-an-article/comments")
+  //       .send(newComment)
+  //       .expect(400)
+  //       .then(({ body }) => {
+  //         expect(body.msg).toBe("Bad request");
+  //       });
+  //   });
 });
