@@ -123,7 +123,13 @@ function sendArticle(body) {
   return db
     .query(
       "INSERT INTO articles (author, title, body, topic, article_img_url, votes, comment_count, created_at) VALUES ($1, $2, $3, $4, $5, 0, 0, NOW()) RETURNING *",
-      [body.author, body.title, body.body, body.topic, body.article_img_url]
+      [
+        body.author,
+        body.title,
+        body.body,
+        body.topic,
+        body.article_img_url || "www.google.com",
+      ]
     )
     .then(({ rows }) => {
       return rows[0];
