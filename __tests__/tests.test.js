@@ -744,7 +744,7 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
-describe.only("/api/topics", () => {
+describe("/api/topics", () => {
   test("HANDLE POST 201: responds with a 201 status code and adds the new topic to the existing database, then returns to user what was added.", () => {
     const newTopic = {
       slug: "cool people",
