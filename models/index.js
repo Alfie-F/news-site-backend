@@ -1,5 +1,5 @@
 db = require("../db/connection");
-
+const { fetchArticlesALL, totalArticles } = require("./allArticles.model");
 const { fetchTopics } = require("./topics.models");
 const {
   fetchArticle,
@@ -28,4 +28,6 @@ module.exports = {
   updateComment,
   sendArticle,
   addCommentCount,
+  fetchArticlesALL,
+  totalArticles,
 };

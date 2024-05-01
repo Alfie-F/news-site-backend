@@ -1,4 +1,5 @@
 const {
+  fetchTopics,
   fetchArticle,
   fetchArticles,
   fetchComments,
@@ -7,6 +8,8 @@ const {
   updateArticle,
   sendArticle,
   addCommentCount,
+  fetchArticlesALL,
+  totalArticles,
 } = require("../models/");
 
 function getArticle(req, res, next) {
@@ -19,9 +22,18 @@ function getArticle(req, res, next) {
 }
 
 function getArticles(req, res, next) {
-  const { sort_by } = req.query;
-  return fetchArticles(sort_by)
-    .then((articles) => res.status(200).send({ articles }))
+  let TA = 0;
+  return totalArticles()
+    .then((total) => {
+      TA = Number(total);
+      return fetchTopics();
+    })
+    .then((topics) => {
+      return fetchArticlesALL(req.query, topics);
+    })
+    .then((articles) =>
+      res.status(200).send({ articles: articles, total_count: TA })
+    )
     .catch(next);
 }
 
