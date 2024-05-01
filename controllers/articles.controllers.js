@@ -1,7 +1,6 @@
 const {
   fetchTopics,
   fetchArticle,
-  fetchArticles,
   fetchComments,
   checkForArticle,
   sendComment,
@@ -41,7 +40,7 @@ function getComments(req, res, next) {
   const { article_id } = req.params;
   return checkForArticle(article_id)
     .then(() => {
-      return fetchComments(article_id);
+      return fetchComments(article_id, req.query);
     })
     .then((comments) => res.status(200).send({ comments }))
     .catch(next);

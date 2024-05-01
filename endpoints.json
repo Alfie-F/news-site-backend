@@ -4,14 +4,13 @@
   },
   "GET/api/topics": {
     "description": "serves an array of all topics",
-    "queries": [],
     "exampleResponse": {
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
   "GET/api/articles/:article_id": {
     "description": "serves a single queried article",
-    "queries": "any integer with an existing article",
+    "params": "any integer with an existing article",
     "exampleResponse": {
       "article": 
         {
@@ -30,7 +29,7 @@
   },
   "GET/api/articles": {
     "description": "serves an array of all articles",
-    "queries": {
+    "params": {
       "order": [
         "asc",
         "topic"
@@ -47,9 +46,10 @@
       "topics": ["mitch",
       "cats",
       "paper",
-      "undefined(will default to all"],
+      "undefined(will default to all"]},
+    "queries": {
       "Limit": ["any integer up to the amount of articles"],
-      "p": ["any integer up to the amount of articles divided by limit"],
+      "p": ["any integer up to the amount of articles divided by limit"]},
     "exampleResponse": [
         {
           "article_id": 7,
@@ -65,7 +65,7 @@
     },
   "GET/api/articles/:article_id/comments": {
     "description": "returns an array of comments for given article id",
-    "queries": "any integer with an existing article",
+    "params": "any integer with an existing article",
     "exampleResponse": 
       [
         {
@@ -88,7 +88,7 @@
     },
   "POST/api/articles/:article_id/comments": {
     "description": "posts the submitted comment body and returns that body if successfully posted",
-    "queries": "any integer with an existing article",
+    "params": "any integer with an existing article",
     "exampleResponse": {
       "comment": 
         {
@@ -103,7 +103,7 @@
   },
   "PATCH/api/articles/:article_id": {
     "description": "updates an article by article id, changing the number of votes depending on the body",
-    "queries": {"inc_votes" :"any integer with an existing article"},
+    "params": {"inc_votes" :"any integer with an existing article"},
     "exampleResponse": {
       "update": 
       {
@@ -120,12 +120,12 @@
   },
   "Delete/api/comments/:comment_id": {
     "description": "deletes a comment by comment id, returning no body on a 204 if successful",
-    "queries": "any integer with an existing comment",
+    "params": "any integer with an existing comment",
     "exampleResponse": {}
   },
   "GET/api/users": {
   "description": "serves an array of all users",
-  "queries": [],
+  "params": [],
   "exampleResponse": {
     "topics": [
        {
@@ -144,7 +144,7 @@
   },
   "GET/api/users/:username": {
   "description": "serves a single queried user",
-  "queries": "a username",
+  "params": "a username",
   "exampleResponse": {
     "user": 
       {
@@ -156,7 +156,7 @@
   },
   "PATCH//api/comments/:comment_id": {
     "description": "updates a comment by comment id, changing the number of votes depending on the body",
-    "queries": {"inc_votes" :"any integer with an existing article"},
+    "params": {"inc_votes" :"any integer with an existing article"},
     "exampleResponse": {
       "update": {
         "comment_id": 1,
@@ -185,5 +185,4 @@
         }
     }
   }
-}
 }

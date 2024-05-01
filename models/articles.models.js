@@ -11,73 +11,18 @@ function fetchArticle(article_id) {
     });
 }
 
-function fetchArticles(sort_by) {
-  const valid = [
-    "desc",
-    "asc",
-    "title",
-    "topic",
-    "author",
-    "body",
-    "created_at",
-    "article_img_url",
-    "article_id",
-  ];
-
-  function validColumn(sort_by, valid) {
-    return valid.some((valid) => sort_by.startsWith(valid));
-  }
-  let column;
-  let split;
-  if (sort_by && validColumn(sort_by, valid)) {
-    split = sort_by.split("_");
-    column = split[0];
-    sort_by = split[1];
-    order = split[2];
-  }
-
-  const validQueries = ["mitch", "cats", "paper", "icellusedkars"];
-  if (sort_by && !validQueries.includes(sort_by)) {
-    return Promise.reject({ status: 403, msg: "topic does not exist" });
-  }
-  let sqlQuery =
-    "SELECT articles.*, COUNT(comments.article_id) AS comment_count FROM articles LEFT JOIN comments ON articles.article_id = comments.article_id";
-  if (validQueries.includes(sort_by)) {
-    sqlQuery += ` WHERE articles.${column} = '${sort_by}'`;
-  }
-  sqlQuery += " GROUP BY articles.*, articles.article_id, comments.article_id ";
-  if (column !== "asc" && column !== "desc") {
-    if (!column) {
-      sqlQuery += `ORDER BY created_at `;
-    } else {
-      sqlQuery += `ORDER BY ${column} `;
+function fetchComments(article_id, query) {
+  let limit = 50;
+  let p = 0;
+  if (query.limit && query.limit >= 1) {
+    limit = Number(query.limit);
+    if (query.p && query.p >= 1) {
+      p = Number(query.p);
     }
   }
-
-  if (!sqlQuery.includes("ORDER BY")) {
-    sqlQuery += `ORDER BY created_at `;
-  }
-
-  if (split && split[split.length - 1] === "asc") {
-    sqlQuery += "ASC";
-  } else {
-    sqlQuery += "DESC";
-  }
-  // sqlQuery += " LIMIT 5 OFFSET 1;";
-  return db.query(sqlQuery).then(({ rows }) => {
-    if (rows.length === 0) {
-      return Promise.reject({
-        status: 404,
-        msg: "no articles exist for topic",
-      });
-    } else return rows;
-  });
-}
-
-function fetchComments(article_id) {
   return db
     .query(
-      "SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at ASC",
+      `SELECT * FROM comments WHERE article_id = $1 ORDER BY created_at ASC LIMIT ${limit} OFFSET ${p}`,
       [article_id]
     )
     .then(({ rows }) => {
@@ -147,7 +92,6 @@ function addCommentCount() {
 
 module.exports = {
   fetchArticle,
-  fetchArticles,
   fetchComments,
   checkForArticle,
   sendComment,

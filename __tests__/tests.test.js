@@ -673,3 +673,73 @@ describe("/api/articles", () => {
       });
   });
 });
+describe("/api/articles/:article_id/comments", () => {
+  test("GET 200: responds with a 200 status code and all comments on that article, adding pagination to this.", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=5&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        let { comments } = body;
+        expect(comments).toHaveLength(5);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+        });
+        expect(comments).toBeSortedBy("created_at");
+      });
+  });
+  test("defaults if either limit or page is zero.", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=0&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        let { comments } = body;
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+        });
+        expect(comments).toBeSortedBy("created_at");
+      });
+  });
+  test("defaults if either limit or page is zero.", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=0")
+      .expect(200)
+      .then(({ body }) => {
+        let { comments } = body;
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+        });
+        expect(comments).toBeSortedBy("created_at");
+      });
+  });
+  test("defaults successfully if no limit but page is provided.", () => {
+    return request(app)
+      .get("/api/articles/1/comments?p=3")
+      .expect(200)
+      .then(({ body }) => {
+        let { comments } = body;
+        expect(comments).toHaveLength(11);
+        comments.forEach((comment) => {
+          expect(comment.article_id).toBe(1);
+          expect(typeof comment.author).toBe("string");
+          expect(typeof comment.body).toBe("string");
+          expect(typeof comment.created_at).toBe("string");
+          expect(typeof comment.votes).toBe("number");
+        });
+        expect(comments).toBeSortedBy("created_at");
+      });
+  });
+});

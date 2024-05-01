@@ -3,7 +3,6 @@ const { fetchArticlesALL, totalArticles } = require("./allArticles.model");
 const { fetchTopics } = require("./topics.models");
 const {
   fetchArticle,
-  fetchArticles,
   fetchComments,
   checkForArticle,
   sendComment,
@@ -17,7 +16,6 @@ const { fetchUsers, fetchUser } = require("./users.models");
 module.exports = {
   fetchTopics,
   fetchArticle,
-  fetchArticles,
   fetchComments,
   checkForArticle,
   sendComment,
