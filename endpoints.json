@@ -31,8 +31,25 @@
   "GET/api/articles": {
     "description": "serves an array of all articles",
     "queries": {
-      "topics": ["mitch","cats","undefined(will default to all"],
-    "any other column": "will accept any other valid column name as an argument, however valid values for each column will need to be added to the validQueries list (which prevents SQL injection) in order to filter further"},
+      "order": [
+        "asc",
+        "topic"
+      ],
+      "sort_by": [
+        "title",
+        "topic",
+        "author",
+        "body",
+        "created_at",
+        "article_img_url",
+        "article_id"
+      ],
+      "topics": ["mitch",
+      "cats",
+      "paper",
+      "undefined(will default to all"],
+      "Limit": ["any integer up to the amount of articles"],
+      "p": ["any integer up to the amount of articles divided by limit"],
     "exampleResponse": [
         {
           "article_id": 7,
@@ -168,4 +185,5 @@
         }
     }
   }
+}
 }

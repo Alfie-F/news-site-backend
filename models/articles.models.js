@@ -59,10 +59,11 @@ function fetchArticles(sort_by) {
   }
 
   if (split && split[split.length - 1] === "asc") {
-    sqlQuery += "ASC;";
+    sqlQuery += "ASC";
   } else {
-    sqlQuery += "DESC;";
+    sqlQuery += "DESC";
   }
+  // sqlQuery += " LIMIT 5 OFFSET 1;";
   return db.query(sqlQuery).then(({ rows }) => {
     if (rows.length === 0) {
       return Promise.reject({

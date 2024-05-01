@@ -86,7 +86,7 @@ describe("/api/articles/:article_id", () => {
 describe("/api/articles", () => {
   test("GET 200: responds with a 200 status code and gets all articles, in descending order.", () => {
     return request(app)
-      .get("/api/articles")
+      .get("/api/articles?limit=20")
       .expect(200)
       .then(({ body }) => {
         let { articles } = body;
@@ -371,7 +371,7 @@ describe("/api/users", () => {
 describe("/api/articles?sort_by=topic_query", () => {
   test("GET 200: Responds with a 200 status code and gets list of articles filtered by the topic the client specifies in the query.", () => {
     return request(app)
-      .get("/api/articles?sort_by=topic_mitch")
+      .get("/api/articles?topic=mitch&limit=20")
       .expect(200)
       .then(({ body }) => {
         let { articles } = body;
@@ -383,7 +383,7 @@ describe("/api/articles?sort_by=topic_query", () => {
   });
   test("GET 403: Responds with a 403 status code when request is not on greenlist.", () => {
     return request(app)
-      .get("/api/articles?sort_by=topic_recipes")
+      .get("/api/articles?topic=recipes&limit=20")
       .expect(403)
       .then(({ body }) => {
         expect(body).toEqual({
@@ -393,7 +393,7 @@ describe("/api/articles?sort_by=topic_query", () => {
   });
   test("GET 404: Responds with a 404 status code when request is on greenlist but has no associated articles.", () => {
     return request(app)
-      .get("/api/articles?sort_by=topic_paper")
+      .get("/api/articles?topic=paper&limit=20")
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({
@@ -415,10 +415,10 @@ describe("/api/articles/:article_id", () => {
   });
 });
 
-describe("/api/articles?sort_by=topic_query", () => {
+describe("/api/articles?sort_by=topic_category", () => {
   test("GET 200: Responds with a 200 status code and gets list of articles ordered by any valid column - desc by default.", () => {
     return request(app)
-      .get("/api/articles?sort_by=author")
+      .get("/api/articles?sort_by=author&limit=20")
       .expect(200)
       .then(({ body }) => {
         let { articles } = body;
@@ -428,7 +428,7 @@ describe("/api/articles?sort_by=topic_query", () => {
   });
   test("GET 403: Responds with a 403 status code when request is not on greenlist.", () => {
     return request(app)
-      .get("/api/articles?sort_by=author_name")
+      .get("/api/articles?sort_by=author_name&limit=20")
       .expect(403)
       .then(({ body }) => {
         expect(body).toEqual({
@@ -438,21 +438,21 @@ describe("/api/articles?sort_by=topic_query", () => {
   });
   test("GET 200: Responds with a 200 status code and gets list of articles ordered by any valid column, if any, and can order by asc or desc.", () => {
     return request(app)
-      .get("/api/articles?sort_by=desc")
+      .get("/api/articles?order=asc&limit=20")
       .expect(200)
       .then(({ body }) => {
         let { articles } = body;
         expect(articles).toHaveLength(13);
-        expect(articles).toBeSortedBy("created_at", { descending: true });
+        expect(articles).toBeSortedBy("created_at", { descending: false });
       });
   });
   test("GET 200: Responds with a 200 status code and gets list of articles ordered by any valid column, filtered by a value in that column, if any, and can order by asc or desc (as it has been filtered the order will be the same either way, but should not break code).", () => {
     return request(app)
-      .get("/api/articles?sort_by=author_icellusedkars_asc")
+      .get("/api/articles?topic=mitch&sort_by=author&order=asc&limit=20")
       .expect(200)
       .then(({ body }) => {
         let { articles } = body;
-        expect(articles).toHaveLength(6);
+        expect(articles).toHaveLength(12);
         expect(articles).toBeSortedBy("author", { descending: false });
       });
   });
@@ -572,7 +572,7 @@ describe("/api/articles/:article_id", () => {
 });
 
 describe("/api/articles", () => {
-  test("HANDLE POST 201: responds with a 201 status code and adds the new article to the existing database, then returns to user what was added - also adds comment_count category and deafuaults article_img_url if not provided.", () => {
+  test("POST 201: responds with a 201 status code and adds the new article to the existing database, then returns to user what was added - also adds comment_count category and deafuaults article_img_url if not provided.", () => {
     const newArticle = {
       author: "rogersop",
       title: "my very good article",
@@ -585,7 +585,6 @@ describe("/api/articles", () => {
       .expect(200)
       .then(({ body }) => {
         body = body.article;
-        console.log(body);
         expect(body.article_id).toBe(14);
         expect(typeof body.author).toBe("string");
         expect(typeof body.body).toBe("string");
@@ -594,7 +593,7 @@ describe("/api/articles", () => {
         expect(body.article_img_url).toBe("www.google.com");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
     const newArticle = {
       author: "rogersop",
       title: "my very good article",
@@ -607,7 +606,7 @@ describe("/api/articles", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
     const newArticle = {
       author: "rogersop",
       title: "my very good article",
@@ -624,7 +623,7 @@ describe("/api/articles", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
     const newArticle = {
       author: "mrCool",
       title: "my very good article",
@@ -637,6 +636,40 @@ describe("/api/articles", () => {
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
+      });
+  });
+});
+describe("/api/articles", () => {
+  test("GET 200: responds with a 200 status code and gets pagination of articles, in descending order.", () => {
+    return request(app)
+      .get("/api/articles?limit=4&p=3")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.total_count).toBe(13);
+        let { articles } = body;
+        expect(articles).toHaveLength(4);
+        expect(articles[0].article_id).toBe(12);
+        articles.forEach((article) => {
+          expect(article).toHaveProperty("title");
+          expect(article).toHaveProperty("topic");
+          expect(article).toHaveProperty("author");
+          expect(article).toHaveProperty("created_at");
+          expect(article).toHaveProperty("article_img_url");
+          expect(article).toHaveProperty("article_id");
+          expect(article).toHaveProperty("votes");
+          expect(article).toHaveProperty("comment_count");
+        });
+        expect(articles).toBeSortedBy("created_at", { descending: true });
+      });
+  });
+  test("GET 404: Responds with a 404 status code when request is not valid (too high or low, or misspelled).", () => {
+    return request(app)
+      .get("/api/articles?limit=4&p=20")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: "no articles exist for topic",
+        });
       });
   });
 });
