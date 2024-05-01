@@ -11,6 +11,8 @@ const {
   addCommentCount,
   fetchArticlesALL,
   totalArticles,
+  removeArticle,
+  removeComments,
 } = require("../models/");
 
 function getArticle(req, res, next) {
@@ -85,6 +87,18 @@ function postArticle(req, res, next) {
     .catch(next);
 }
 
+function deleteArticle(req, res, next) {
+  const { article_id } = req.params;
+  return removeComments(article_id)
+    .then(() => {
+      return removeArticle(article_id);
+    })
+    .then(() => {
+      res.status(204).send();
+    })
+    .catch(next);
+}
+
 module.exports = {
   getArticle,
   getArticles,
@@ -92,4 +106,5 @@ module.exports = {
   postComment,
   patchArticle,
   postArticle,
+  deleteArticle,
 };

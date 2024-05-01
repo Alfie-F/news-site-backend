@@ -787,3 +787,54 @@ describe("/api/topics", () => {
       });
   });
 });
+describe("/api/comments/:comment_id", () => {
+  test("DELETE:204 deletes the specified comments and sends no body back.", () => {
+    return request(app)
+      .delete("/api/comments/3")
+      .expect(204)
+      .then(() => {});
+  });
+
+  test("DELETE:404 responds with an appropriate status and error message when given a valid but non-existent id.", () => {
+    return request(app)
+      .delete("/api/comments/30000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("comment does not exist");
+      });
+  });
+  test("DELETE:400 responds with an appropriate status and error message when given an invalid id.", () => {
+    return request(app)
+      .delete("/api/comments/not-a-comment")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});
+
+describe("/api/articles/:article_id", () => {
+  test("DELETE:204 deletes the specified comments and sends no body back.", () => {
+    return request(app)
+      .delete("/api/articles/3")
+      .expect(204)
+      .then(() => {});
+  });
+
+  test("DELETE:404 responds with an appropriate status and error message when given a valid but non-existent id.", () => {
+    return request(app)
+      .delete("/api/articles/30000")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article does not exist");
+      });
+  });
+  test("DELETE:400 responds with an appropriate status and error message when given an invalid id.", () => {
+    return request(app)
+      .delete("/api/articles/not-an-article")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+});

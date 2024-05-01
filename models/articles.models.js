@@ -121,6 +121,24 @@ function addCommentCount() {
     });
 }
 
+function removeArticle(article_id) {
+  return db
+    .query("DELETE FROM articles WHERE article_id = $1;", [article_id])
+    .then(({ rowCount }) => {
+      if (rowCount === 0) {
+        return Promise.reject({ status: 404, msg: "article does not exist" });
+      } else return;
+    });
+}
+
+function removeComments(article_id) {
+  return db
+    .query("DELETE FROM comments WHERE article_id = $1;", [article_id])
+    .then(({ rowCount }) => {
+      return;
+    });
+}
+
 module.exports = {
   fetchArticle,
   fetchComments,
@@ -131,6 +149,8 @@ module.exports = {
   updateArticle,
   sendArticle,
   addCommentCount,
+  removeArticle,
+  removeComments,
 };
 
 // ALTER TABLE articles ADD COLUMN comment_count SMALLINT

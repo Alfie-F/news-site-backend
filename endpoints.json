@@ -194,5 +194,10 @@
         "description": "like goodbye, except the opposite"
       }
     }
+  },
+  "Delete/api/articles/:article_id": {
+    "description": "deletes all comments under a certain article id, then deletes the article itself",
+    "params": "any integer with an existing article",
+    "exampleResponse": {}
   }
 }

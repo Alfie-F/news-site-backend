@@ -11,6 +11,8 @@ const {
   updateArticle,
   sendArticle,
   addCommentCount,
+  removeArticle,
+  removeComments,
 } = require("../models/articles.models");
 const { removeComment, updateComment } = require("./comments.models");
 const { fetchUsers, fetchUser } = require("./users.models");
@@ -33,4 +35,6 @@ module.exports = {
   fetchArticlesALL,
   totalArticles,
   sendTopic,
+  removeArticle,
+  removeComments,
 };
