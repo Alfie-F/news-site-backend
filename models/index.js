@@ -1,10 +1,12 @@
 db = require("../db/connection");
 const { fetchArticlesALL, totalArticles } = require("./allArticles.model");
-const { fetchTopics } = require("./topics.models");
+const { fetchTopics, sendTopic } = require("./topics.models");
 const {
   fetchArticle,
   fetchComments,
   checkForArticle,
+  checkForAuthor,
+  checkForUser,
   sendComment,
   updateArticle,
   sendArticle,
@@ -18,6 +20,8 @@ module.exports = {
   fetchArticle,
   fetchComments,
   checkForArticle,
+  checkForAuthor,
+  checkForUser,
   sendComment,
   updateArticle,
   removeComment,
@@ -28,4 +32,5 @@ module.exports = {
   addCommentCount,
   fetchArticlesALL,
   totalArticles,
+  sendTopic,
 };

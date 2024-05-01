@@ -151,7 +151,7 @@ describe("/api/articles/:article_id/comments", () => {
 });
 
 describe("/api/articles/:article_id/comments", () => {
-  test("HANDLE POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added.", () => {
+  test("POST 201: responds with a 201 status code and adds the new comment to the existing database, then returns to user what was added.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -159,7 +159,7 @@ describe("/api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/6/comments")
       .send(newComment)
-      .expect(200)
+      .expect(201)
       .then(({ body }) => {
         body = body.comment;
         expect(body.article_id).toBe(6);
@@ -169,7 +169,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(typeof body.votes).toBe("number");
       });
   });
-  test("HANDLE POST 404: responds with a 404 status code and returns custom error when the article_id is valid but non existent.", () => {
+  test("POST 404: responds with a 404 status code and returns custom error when the article_id is valid but non existent.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -182,7 +182,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("article does not exist");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when article_id is a bad request.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when article_id is a bad request.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
@@ -195,43 +195,44 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
     const newComment = {
+      username: "icellusedkars",
       ingredients: "toast, butter, ham, cheese",
     };
     return request(app)
-      .post("/api/articles/still-not-an-article/comments")
+      .post("/api/articles/6/comments")
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
     const newComment = {
       username: "icellusedkars",
       body: "sam approves this message",
       ingredients: "toast, butter, ham, cheese",
     };
     return request(app)
-      .post("/api/articles/still-not-an-article/comments")
+      .post("/api/articles/6/comments")
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
+        expect(body.msg).toBe("too many keys on submitted object");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
+  test("POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
     const newComment = {
       username: "mrCool",
       body: "sam approves this message",
     };
     return request(app)
-      .post("/api/articles/still-not-an-article/comments")
+      .post("/api/articles/6/comments")
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
+        expect(body.msg).toBe("username does not exist");
       });
   });
 });
@@ -599,7 +600,7 @@ describe("/api/articles", () => {
       title: "my very good article",
     };
     return request(app)
-      .post("/api/articles/still-not-an-article/comments")
+      .post("/api/articles")
       .send(newArticle)
       .expect(400)
       .then(({ body }) => {
@@ -616,11 +617,11 @@ describe("/api/articles", () => {
       ham: "cheese",
     };
     return request(app)
-      .post("/api/articles/still-not-an-article/comments")
+      .post("/api/articles")
       .send(newArticle)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
+        expect(body.msg).toBe("too many keys on submitted object");
       });
   });
   test("POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
@@ -631,11 +632,11 @@ describe("/api/articles", () => {
       topic: "cats",
     };
     return request(app)
-      .post("/api/articles/still-not-an-article/comments")
+      .post("/api/articles")
       .send(newArticle)
       .expect(400)
       .then(({ body }) => {
-        expect(body.msg).toBe("Bad request");
+        expect(body.msg).toBe("author does not exist");
       });
   });
 });
@@ -742,4 +743,60 @@ describe("/api/articles/:article_id/comments", () => {
         expect(comments).toBeSortedBy("created_at");
       });
   });
+});
+describe("/api/topics", () => {
+  test("HANDLE POST 201: responds with a 201 status code and adds the new topic to the existing database, then returns to user what was added.", () => {
+    const newComment = {
+      slug: "cool people",
+      description: "whoever is reading this <3",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        body = body.topic;
+        expect(typeof body.slug).toBe("string");
+        expect(typeof body.description).toBe("string");
+      });
+  });
+  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
+    const newComment = {
+      ingredients: "toast, butter, ham, cheese",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("Bad request");
+      });
+  });
+  // test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
+  //   const newComment = {
+  //     username: "icellusedkars",
+  //     body: "sam approves this message",
+  //     ingredients: "toast, butter, ham, cheese",
+  //   };
+  //   return request(app)
+  //     .post("/api/articles/still-not-an-article/comments")
+  //     .send(newComment)
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("Bad request");
+  //     });
+  // });
+  // test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
+  //   const newComment = {
+  //     username: "mrCool",
+  //     body: "sam approves this message",
+  //   };
+  //   return request(app)
+  //     .post("/api/articles/still-not-an-article/comments")
+  //     .send(newComment)
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body.msg).toBe("Bad request");
+  //     });
+  // });
 });

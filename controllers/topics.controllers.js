@@ -1,4 +1,4 @@
-const { fetchTopics } = require("../models/index.js");
+const { fetchTopics, sendTopic } = require("../models/index.js");
 
 function getTopics(req, res, next) {
   return fetchTopics()
@@ -6,6 +6,16 @@ function getTopics(req, res, next) {
     .catch(next);
 }
 
+function postTopic(req, res, next) {
+  const topicBody = req.body;
+  return sendTopic(topicBody)
+    .then((topic) => {
+      res.status(201).send({ topic });
+    })
+    .catch(next);
+}
+
 module.exports = {
   getTopics,
+  postTopic,
 };

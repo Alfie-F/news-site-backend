@@ -3,6 +3,8 @@ const {
   fetchArticle,
   fetchComments,
   checkForArticle,
+  checkForAuthor,
+  checkForUser,
   sendComment,
   updateArticle,
   sendArticle,
@@ -49,9 +51,12 @@ function getComments(req, res, next) {
 function postComment(req, res, next) {
   const { article_id } = req.params;
   const commentBody = req.body;
-  return sendComment(article_id, commentBody)
+  return checkForUser(req.body)
+    .then(() => {
+      return sendComment(article_id, commentBody);
+    })
     .then((comment) => {
-      res.status(200).send({ comment });
+      res.status(201).send({ comment });
     })
     .catch(next);
 }
@@ -67,7 +72,10 @@ function patchArticle(req, res, next) {
 
 function postArticle(req, res, next) {
   const articleBody = req.body;
-  return addCommentCount()
+  return checkForAuthor(req.body)
+    .then(() => {
+      return addCommentCount();
+    })
     .then(() => {
       return sendArticle(articleBody);
     })

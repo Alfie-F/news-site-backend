@@ -1,3 +1,5 @@
+const { keys } = require("../db/data/test-data/articles");
+
 function fetchArticle(article_id) {
   return db
     .query(
@@ -41,7 +43,31 @@ function checkForArticle(article_id) {
     });
 }
 
+function checkForUser(author) {
+  return db.query("SELECT username FROM users").then(({ rows }) => {
+    let usernames = rows.map((row) => row.username);
+    if (usernames.includes(author.username)) {
+      return;
+    } else
+      return Promise.reject({ status: 400, msg: "username does not exist" });
+  });
+}
+
+function checkForAuthor(authorReq) {
+  return db.query("SELECT username FROM users").then(({ rows }) => {
+    let authors = rows.map((row) => row.username);
+    if (authors.includes(authorReq.author)) {
+      return;
+    } else return Promise.reject({ status: 400, msg: "author does not exist" });
+  });
+}
+
 function sendComment(articleID, commentBody) {
+  if (Object.keys(commentBody).length > 2)
+    return Promise.reject({
+      status: 400,
+      msg: "too many keys on submitted object",
+    });
   return db
     .query(
       "INSERT INTO comments (author, body, article_id, votes, created_at) VALUES ($1, $2, $3, 0, NOW()) RETURNING *",
@@ -66,6 +92,11 @@ function updateArticle(article_id, inc_votes) {
 }
 
 function sendArticle(body) {
+  if (Object.keys(body).length > 5)
+    return Promise.reject({
+      status: 400,
+      msg: "too many keys on submitted object",
+    });
   return db
     .query(
       "INSERT INTO articles (author, title, body, topic, article_img_url, votes, comment_count, created_at) VALUES ($1, $2, $3, $4, $5, 0, 0, NOW()) RETURNING *",
@@ -94,6 +125,8 @@ module.exports = {
   fetchArticle,
   fetchComments,
   checkForArticle,
+  checkForAuthor,
+  checkForUser,
   sendComment,
   updateArticle,
   sendArticle,

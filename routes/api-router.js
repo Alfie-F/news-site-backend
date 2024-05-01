@@ -8,6 +8,7 @@ const {
   getUsers,
   getUser,
   patchComment,
+  postTopic,
 } = require("../controllers/index");
 
 let api = express.Router();
@@ -17,6 +18,8 @@ api.use(express.json());
 api.use("/articles", articles);
 
 api.get("", getAPI);
+
+api.route("/topics").get(getTopics).post(postTopic);
 
 api.get("/topics", getTopics);
 

@@ -1,6 +1,6 @@
 fs = require("fs/promises");
 
-const { getTopics } = require("./topics.controllers");
+const { getTopics, postTopic } = require("./topics.controllers");
 const { getAPI } = require("./api.controllers");
 const {
   getArticle,
@@ -26,4 +26,5 @@ module.exports = {
   getUsers,
   getUser,
   postArticle,
+  postTopic,
 };
