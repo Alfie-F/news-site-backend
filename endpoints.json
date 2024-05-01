@@ -184,5 +184,15 @@
         "comment_count": 0
         }
     }
+  },
+  "POST/api/topics": {
+    "description": "posts the submitted topic body and returns that body if successfully posted",
+    "exampleResponse": {
+      "topic": 
+      {
+        "slug": "hello",
+        "description": "like goodbye, except the opposite"
+      }
+    }
   }
 }

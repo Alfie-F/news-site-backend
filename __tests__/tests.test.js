@@ -744,15 +744,15 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
-describe("/api/topics", () => {
+describe.only("/api/topics", () => {
   test("HANDLE POST 201: responds with a 201 status code and adds the new topic to the existing database, then returns to user what was added.", () => {
-    const newComment = {
+    const newTopic = {
       slug: "cool people",
       description: "whoever is reading this <3",
     };
     return request(app)
       .post("/api/topics")
-      .send(newComment)
+      .send(newTopic)
       .expect(201)
       .then(({ body }) => {
         body = body.topic;
@@ -760,43 +760,30 @@ describe("/api/topics", () => {
         expect(typeof body.description).toBe("string");
       });
   });
-  test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
-    const newComment = {
+  test("POST 400: responds with a 400 status code and returns bad request error message when body is incorrect/incomplete.", () => {
+    const newTopic = {
       ingredients: "toast, butter, ham, cheese",
     };
     return request(app)
       .post("/api/topics")
-      .send(newComment)
+      .send(newTopic)
       .expect(400)
       .then(({ body }) => {
         expect(body.msg).toBe("Bad request");
       });
   });
-  // test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
-  //   const newComment = {
-  //     username: "icellusedkars",
-  //     body: "sam approves this message",
-  //     ingredients: "toast, butter, ham, cheese",
-  //   };
-  //   return request(app)
-  //     .post("/api/articles/still-not-an-article/comments")
-  //     .send(newComment)
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Bad request");
-  //     });
-  // });
-  // test("HANDLE POST 400: responds with a 400 status code and returns bad request error message when author is not on the database.", () => {
-  //   const newComment = {
-  //     username: "mrCool",
-  //     body: "sam approves this message",
-  //   };
-  //   return request(app)
-  //     .post("/api/articles/still-not-an-article/comments")
-  //     .send(newComment)
-  //     .expect(400)
-  //     .then(({ body }) => {
-  //       expect(body.msg).toBe("Bad request");
-  //     });
-  // });
+  test("POST 400: responds with a 400 status code and returns bad request error message when body contains too many keys.", () => {
+    const newTopic = {
+      username: "icellusedkars",
+      slug: "topic name here",
+      description: "description here",
+    };
+    return request(app)
+      .post("/api/topics")
+      .send(newTopic)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("too many keys on submitted object");
+      });
+  });
 });
