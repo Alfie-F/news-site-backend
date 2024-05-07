@@ -814,7 +814,7 @@ describe("/api/comments/:comment_id", () => {
 });
 
 describe("/api/articles/:article_id", () => {
-  test("DELETE:204 deletes the specified comments and sends no body back.", () => {
+  test("DELETE:204 deletes the specified article and sends no body back.", () => {
     return request(app)
       .delete("/api/articles/3")
       .expect(204)

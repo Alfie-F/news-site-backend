@@ -21,14 +21,10 @@ api.get("", getAPI);
 
 api.route("/topics").get(getTopics).post(postTopic);
 
-api.get("/topics", getTopics);
-
-api.delete("/comments/:comment_id", deleteComment);
+api.route("/comments/:comment_id").delete(deleteComment).patch(patchComment);
 
 api.get("/users", getUsers);
 
 api.get("/users/:username", getUser);
-
-api.patch("/comments/:comment_id", patchComment);
 
 module.exports = api;
